@@ -1,0 +1,43 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Java 编译输出
+out/
+target/
+build/
+*.class
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+*.jar
+!**/src/main/**/*.jar
+!**/src/test/**/*.jar
+
+# Gradle
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+
+# 打包产物
+dist/
+*.tar.gz
+*.zip
+
+# JavaFX / jlink / jpackage 产物
+*.jnlp
+!**/src/main/resources/**/*.jnlp
+
+# 日志与临时文件
+*.log
+*.tmp
+*.swp
+
+# 操作系统
+.DS_Store
+Thumbs.db
