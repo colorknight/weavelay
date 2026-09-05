@@ -1,0 +1,5 @@
+# WeaveLay licence keys (vendor only)
+# private.ed25519.b64 must NEVER be committed or given to dealers.
+*
+!.gitignore
+!README.md

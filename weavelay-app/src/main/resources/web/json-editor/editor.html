@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#fafafa;
+      font-family:"Cascadia Mono","Consolas","Microsoft YaHei",monospace; }
+    #wrap { display:flex; width:100%; height:100%; border:1px solid #d0d0d0; background:#fff; box-sizing:border-box; }
+    #gutter { flex:0 0 44px; padding:10px 6px 10px 0; text-align:right; color:#9aa0a6; font-size:13px;
+      line-height:1.55; background:#f3f4f6; border-right:1px solid #e5e7eb; overflow:hidden; user-select:none; white-space:pre; }
+    #gutter .hit { color:#b45309; background:#fde68a; border-radius:2px; }
+    #editor { flex:1; width:100%; height:100%; border:0; outline:none; resize:none; padding:10px 12px; margin:0;
+      font:inherit; font-size:13px; line-height:1.55; color:#111827; background:#fff; white-space:pre; overflow:auto; tab-size:2; }
+    #status { position:absolute; right:10px; bottom:6px; font-size:11px; color:#6b7280;
+      background:rgba(255,255,255,.92); padding:2px 8px; border-radius:4px; pointer-events:none; }
+    #status.err { color:#b91c1c; } #status.ok { color:#047857; }
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <div id="gutter">1</div>
+    <textarea id="editor" spellcheck="false"></textarea>
+  </div>
+  <div id="status">就绪</div>
+  <script>
+(function () {
+  var editor = document.getElementById("editor");
+  var gutter = document.getElementById("gutter");
+  var status = document.getElementById("status");
+  var ready = false;
+  var pendingValue = null;
+  var OPEN = { "{": "}", "[": "]", "(": ")" };
+  var CLOSE = { "}": "{", "]": "[", ")": "(" };
+
+  function notifyReady() {
+    ready = true;
+    if (pendingValue != null) {
+      editor.value = pendingValue;
+      pendingValue = null;
+      refreshAll();
+    }
+    pingJavaReady();
+  }
+  function pingJavaReady() {
+    if (window.javaBridge && typeof window.javaBridge.onReady === "function") {
+      try { window.javaBridge.onReady(); } catch (e) {}
+    }
+  }
+  window.notifyJavaReady = function () { if (ready) pingJavaReady(); };
+
+  window.editorSetValue = function (text) {
+    var v = text == null ? "" : String(text);
+    if (!ready) { pendingValue = v; return; }
+    editor.value = v;
+    refreshAll();
+  };
+  window.editorGetValue = function () { return editor.value || ""; };
+  window.editorFormat = function () {
+    try {
+      editor.value = prettyPrint(JSON.parse(editor.value));
+      refreshAll();
+    } catch (e) {
+      status.className = "err";
+      status.textContent = "无法格式化";
+    }
+  };
+  window.editorSetSchema = function () {};
+  window.editorIsReady = function () { return ready; };
+
+  function prettyPrint(value) {
+    return write(value, 0) + "\n";
+  }
+  function isNonEmptyComplex(v) {
+    if (v === null || typeof v !== "object") return false;
+    if (Array.isArray(v)) return v.length > 0;
+    return Object.keys(v).length > 0;
+  }
+  function write(v, depth) {
+    var pad = indent(depth);
+    var pad1 = indent(depth + 1);
+    if (v === null) return "null";
+    var t = typeof v;
+    if (t === "number" || t === "boolean") return String(v);
+    if (t === "string") return JSON.stringify(v);
+    var i, out;
+    if (Array.isArray(v)) {
+      if (v.length === 0) return "[]";
+      out = "[\n";
+      for (i = 0; i < v.length; i++) {
+        out += pad1 + write(v[i], depth + 1);
+        if (i < v.length - 1) out += ",";
+        out += "\n";
+      }
+      out += pad + "]";
+      return out;
+    }
+    if (t === "object") {
+      var keys = Object.keys(v);
+      if (keys.length === 0) return "{}";
+      out = "{\n";
+      for (i = 0; i < keys.length; i++) {
+        var k = keys[i];
+        var child = v[k];
+        var rendered = write(child, depth + 1);
+        if (isNonEmptyComplex(child)) {
+          out += pad1 + JSON.stringify(k) + ":\n" + pad1 + rendered;
+        } else {
+          out += pad1 + JSON.stringify(k) + ": " + rendered;
+        }
+        if (i < keys.length - 1) out += ",";
+        out += "\n";
+      }
+      out += pad + "}";
+      return out;
+    }
+    return "null";
+  }
+  function indent(n) {
+    var s = "";
+    for (var i = 0; i < n; i++) s += "  ";
+    return s;
+  }
+
+  function insideString(text, index) {
+    var inStr = false, esc = false;
+    for (var i = 0; i < index; i++) {
+      var c = text.charAt(i);
+      if (inStr) {
+        if (esc) { esc = false; continue; }
+        if (c === "\\") { esc = true; continue; }
+        if (c === '"') inStr = false;
+      } else if (c === '"') {
+        inStr = true;
+      }
+    }
+    return inStr;
+  }
+
+  function matchBracket(text, at) {
+    if (at < 0 || at >= text.length || insideString(text, at)) return -1;
+    var ch = text.charAt(at);
+    var open = !!OPEN[ch];
+    var other = open ? OPEN[ch] : CLOSE[ch];
+    if (!other) return -1;
+    var depth = 0, inStr = false, esc = false, i, c;
+    if (open) {
+      for (i = at; i < text.length; i++) {
+        c = text.charAt(i);
+        if (inStr) {
+          if (esc) { esc = false; continue; }
+          if (c === "\\") { esc = true; continue; }
+          if (c === '"') inStr = false;
+          continue;
+        }
+        if (c === '"') { inStr = true; continue; }
+        if (c === ch) depth++;
+        else if (c === other) {
+          depth--;
+          if (depth === 0) return i;
+        }
+      }
+      return -1;
+    }
+    for (i = at; i >= 0; i--) {
+      c = text.charAt(i);
+      if (c === '"') {
+        var bs = 0, j = i - 1;
+        while (j >= 0 && text.charAt(j) === "\\") { bs++; j--; }
+        if (bs % 2 === 0) inStr = !inStr;
+        continue;
+      }
+      if (inStr) continue;
+      if (c === ch) depth++;
+      else if (c === other) {
+        depth--;
+        if (depth === 0) return i;
+      }
+    }
+    return -1;
+  }
+
+  function findPairAtCaret(text, caret) {
+    var at = -1;
+    if (caret > 0 && (OPEN[text.charAt(caret - 1)] || CLOSE[text.charAt(caret - 1)])) at = caret - 1;
+    else if (caret < text.length && (OPEN[text.charAt(caret)] || CLOSE[text.charAt(caret)])) at = caret;
+    if (at < 0) return null;
+    var other = matchBracket(text, at);
+    var ch = text.charAt(at);
+    if (OPEN[ch]) return { a: at, b: other };
+    return { a: other, b: at };
+  }
+
+  function offsetToLine(text, offset) {
+    var line = 0;
+    for (var i = 0; i < offset && i < text.length; i++) {
+      if (text.charAt(i) === "\n") line++;
+    }
+    return line;
+  }
+
+  function refreshGutter() {
+    var text = editor.value;
+    var n = text.split("\n").length;
+    var pair = findPairAtCaret(text, editor.selectionStart);
+    var hit = {};
+    if (pair) {
+      if (pair.a >= 0) hit[offsetToLine(text, pair.a)] = true;
+      if (pair.b >= 0) hit[offsetToLine(text, pair.b)] = true;
+    }
+    var lines = [];
+    for (var i = 0; i < n; i++) {
+      if (hit[i]) lines.push("<span class=\"hit\">" + (i + 1) + "</span>");
+      else lines.push(String(i + 1));
+    }
+    gutter.innerHTML = lines.join("\n");
+  }
+
+  function validateNow() {
+    var text = editor.value.trim();
+    if (!text) { status.className = ""; status.textContent = ""; return; }
+    try {
+      JSON.parse(text);
+      status.className = "ok";
+      status.textContent = "JSON 合法";
+    } catch (e) {
+      status.className = "err";
+      status.textContent = "语法错误";
+    }
+  }
+
+  function syncScroll() {
+    gutter.scrollTop = editor.scrollTop;
+  }
+
+  function refreshAll() {
+    refreshGutter();
+    validateNow();
+    syncScroll();
+  }
+
+  editor.addEventListener("input", refreshAll);
+  editor.addEventListener("click", refreshGutter);
+  editor.addEventListener("keyup", refreshGutter);
+  editor.addEventListener("select", refreshGutter);
+  editor.addEventListener("scroll", syncScroll);
+  editor.addEventListener("blur", function () {
+    setTimeout(function () {
+      if (window.javaBridge && typeof window.javaBridge.onBlur === "function") {
+        try { window.javaBridge.onBlur(); } catch (e) {}
+      }
+    }, 150);
+  });
+  editor.addEventListener("keydown", function (e) {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      var p = editor.selectionStart;
+      var end = editor.selectionEnd;
+      editor.value = editor.value.slice(0, p) + "  " + editor.value.slice(end);
+      editor.selectionStart = editor.selectionEnd = p + 2;
+      refreshAll();
+    }
+  });
+
+  refreshAll();
+  notifyReady();
+  editor.focus();
+})();
+  </script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden;
+      font-family:"Microsoft YaHei","Segoe UI",sans-serif; background:#f3f8f8; color:#3a5555; }
+    #toolbar { display:flex; gap:8px; align-items:center; padding:8px 10px; background:#eef5f5;
+      border-bottom:1px solid #c5dede; font-size:12px; }
+    #toolbar button { font:inherit; font-size:12px; padding:4px 10px; cursor:pointer;
+      border:1px solid #b8d4d4; border-radius:4px; background:#fff; color:#3a5555; }
+    #toolbar button:hover { background:#d9e9e9; }
+    #hint { color:#7a9494; margin-left:4px; }
+    #scroll { height:calc(100% - 40px); overflow:auto; padding:10px 12px 16px; box-sizing:border-box; }
+    #empty { color:#7a9494; font-size:13px; padding:24px 8px; }
+    .node { margin:1px 0; line-height:1.45; font-size:13px; }
+    .row { display:flex; align-items:flex-start; gap:4px; min-height:22px; }
+    .toggle { flex:0 0 16px; width:16px; height:18px; border:0; background:transparent; cursor:pointer;
+      color:#2a8f85; font-size:11px; padding:0; line-height:18px; text-align:center; }
+    .toggle.leaf { visibility:hidden; cursor:default; }
+    .key { color:#1f6b63; font-weight:600; font-family:"Cascadia Mono","Consolas",monospace; font-size:12.5px; }
+    .colon { color:#7a9494; margin:0 4px 0 2px; }
+    .preview { color:#7a9494; font-size:12px; font-family:"Cascadia Mono","Consolas",monospace; }
+    .val-str { color:#0f766e; font-family:"Cascadia Mono","Consolas",monospace; font-size:12.5px; word-break:break-all; }
+    .val-num { color:#b45309; font-family:"Cascadia Mono","Consolas",monospace; font-size:12.5px; }
+    .val-bool { color:#7c3aed; font-family:"Cascadia Mono","Consolas",monospace; font-size:12.5px; }
+    .val-null { color:#9ca3af; font-family:"Cascadia Mono","Consolas",monospace; font-size:12.5px; }
+    .children { margin-left:14px; padding-left:10px; border-left:1px solid #c5dede; }
+    .children.collapsed { display:none; }
+    .badge { display:inline-block; margin-left:6px; padding:0 6px; border-radius:9px; font-size:11px;
+      background:#d9e9e9; color:#3a5555; font-weight:500; }
+  </style>
+</head>
+<body>
+  <div id="toolbar">
+    <button type="button" id="btnExpand">展开一级</button>
+    <button type="button" id="btnCollapse">全部折叠</button>
+    <span id="hint">点 ▶ 展开；长数组默认收起</span>
+  </div>
+  <div id="scroll"><div id="root"></div></div>
+  <script>
+(function () {
+  var rootEl = document.getElementById("root");
+  var ready = false;
+  var pending = null;
+  var currentData = null;
+
+  function pingReady() {
+    if (window.javaBridge && typeof window.javaBridge.onReady === "function") {
+      try { window.javaBridge.onReady(); } catch (e) {}
+    }
+  }
+  function notifyReady() {
+    ready = true;
+    if (pending != null) {
+      applyText(pending);
+      pending = null;
+    }
+    pingReady();
+  }
+  window.notifyJavaReady = function () { if (ready) pingReady(); };
+
+  window.viewerSetText = function (text) {
+    var v = text == null ? "" : String(text);
+    if (!ready) { pending = v; return; }
+    applyText(v);
+  };
+  window.viewerGetText = function () {
+    if (currentData === null) return "";
+    try { return JSON.stringify(currentData, null, 2); } catch (e) { return ""; }
+  };
+
+  function applyText(text) {
+    rootEl.innerHTML = "";
+    currentData = null;
+    var t = (text || "").trim();
+    if (!t || t.charAt(0) === "（") {
+      var empty = document.createElement("div");
+      empty.id = "empty";
+      empty.textContent = t || "（暂无数据）";
+      rootEl.appendChild(empty);
+      return;
+    }
+    try {
+      currentData = JSON.parse(t);
+    } catch (e) {
+      var err = document.createElement("div");
+      err.id = "empty";
+      err.textContent = "JSON 无法解析：\n" + t.slice(0, 400);
+      rootEl.appendChild(err);
+      return;
+    }
+    rootEl.appendChild(buildNode(null, currentData, 0, true));
+  }
+
+  function isComplex(v) {
+    return v !== null && typeof v === "object";
+  }
+  function preview(v) {
+    if (v === null) return "null";
+    if (Array.isArray(v)) return "[" + v.length + "]";
+    if (typeof v === "object") {
+      var keys = Object.keys(v);
+      return "{ " + keys.slice(0, 3).join(", ") + (keys.length > 3 ? ", …" : "") + " }";
+    }
+    if (typeof v === "string") {
+      var s = JSON.stringify(v);
+      return s.length > 60 ? s.slice(0, 57) + "…\"" : s;
+    }
+    return String(v);
+  }
+  function valueSpan(v) {
+    var span = document.createElement("span");
+    if (v === null) { span.className = "val-null"; span.textContent = "null"; }
+    else if (typeof v === "string") { span.className = "val-str"; span.textContent = JSON.stringify(v); }
+    else if (typeof v === "number") { span.className = "val-num"; span.textContent = String(v); }
+    else if (typeof v === "boolean") { span.className = "val-bool"; span.textContent = String(v); }
+    else { span.className = "preview"; span.textContent = preview(v); }
+    return span;
+  }
+  function defaultExpanded(depth, value) {
+    if (depth === 0) return true;
+    if (Array.isArray(value)) return value.length <= 2;
+    if (value && typeof value === "object") return depth < 2 && Object.keys(value).length <= 6;
+    return true;
+  }
+
+  function buildNode(key, value, depth, forceExpand) {
+    var wrap = document.createElement("div");
+    wrap.className = "node";
+    var row = document.createElement("div");
+    row.className = "row";
+    var complex = isComplex(value);
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "toggle" + (complex ? "" : " leaf");
+    btn.textContent = complex ? "▶" : "•";
+    row.appendChild(btn);
+
+    if (key !== null && key !== undefined) {
+      var k = document.createElement("span");
+      k.className = "key";
+      k.textContent = String(key);
+      row.appendChild(k);
+      var colon = document.createElement("span");
+      colon.className = "colon";
+      colon.textContent = ":";
+      row.appendChild(colon);
+    }
+
+    if (!complex) {
+      row.appendChild(valueSpan(value));
+      wrap.appendChild(row);
+      return wrap;
+    }
+
+    var badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = Array.isArray(value) ? ("数组 " + value.length) : ("对象 " + Object.keys(value).length);
+    row.appendChild(badge);
+    var prev = document.createElement("span");
+    prev.className = "preview";
+    prev.textContent = "  " + preview(value);
+    row.appendChild(prev);
+    wrap.appendChild(row);
+
+    var kids = document.createElement("div");
+    kids.className = "children";
+    var expanded = forceExpand || defaultExpanded(depth, value);
+    if (!expanded) kids.classList.add("collapsed");
+    btn.textContent = expanded ? "▼" : "▶";
+
+    if (Array.isArray(value)) {
+      for (var i = 0; i < value.length; i++) {
+        kids.appendChild(buildNode(String(i), value[i], depth + 1, false));
+      }
+    } else {
+      Object.keys(value).forEach(function (k) {
+        kids.appendChild(buildNode(k, value[k], depth + 1, false));
+      });
+    }
+    wrap.appendChild(kids);
+
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var open = kids.classList.toggle("collapsed");
+      btn.textContent = open ? "▶" : "▼";
+    });
+    return wrap;
+  }
+
+  function setAll(expanded) {
+    var nodes = rootEl.querySelectorAll(".node");
+    nodes.forEach(function (node) {
+      var kids = node.querySelector(":scope > .children");
+      var btn = node.querySelector(":scope > .row > .toggle");
+      if (!kids || !btn || btn.classList.contains("leaf")) return;
+      if (expanded) {
+        kids.classList.remove("collapsed");
+        btn.textContent = "▼";
+      } else {
+        kids.classList.add("collapsed");
+        btn.textContent = "▶";
+      }
+    });
+  }
+  function expandLevel1() {
+    setAll(false);
+    var topKids = rootEl.querySelectorAll(":scope > .node > .children");
+    topKids.forEach(function (kids) {
+      kids.classList.remove("collapsed");
+      var btn = kids.parentElement.querySelector(":scope > .row > .toggle");
+      if (btn) btn.textContent = "▼";
+    });
+    // also expand root itself
+    var rootNode = rootEl.querySelector(":scope > .node");
+    if (rootNode) {
+      var kids = rootNode.querySelector(":scope > .children");
+      var btn = rootNode.querySelector(":scope > .row > .toggle");
+      if (kids) { kids.classList.remove("collapsed"); }
+      if (btn && !btn.classList.contains("leaf")) btn.textContent = "▼";
+    }
+  }
+
+  document.getElementById("btnExpand").onclick = expandLevel1;
+  document.getElementById("btnCollapse").onclick = function () { setAll(false); };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", notifyReady);
+  } else {
+    notifyReady();
+  }
+})();
+  </script>
+</body>
+</html>

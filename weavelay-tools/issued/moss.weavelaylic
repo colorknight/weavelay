@@ -1,0 +1,11 @@
+{
+  "customer" : "moss",
+  "dealerId" : "",
+  "expiresAt" : "",
+  "features" : [ "confirm", "excel_export", "template_pack" ],
+  "issuedAt" : "2026-07-20T10:01:18.444965700Z",
+  "licenseId" : "f14030f7-4190-46ed-9085-d2233629da3f",
+  "machineId" : "8c6f287ee0525b86bdde002169b98ecaa1520725043bd9c50579d198aa044e41",
+  "product" : "weavelay",
+  "sig" : "ilKdRUUXUB+6r1KlTMSl6RmAzBf10sH+MhhWIr8EHin/hCkFcrl2da1lGC99ryrnXRFTCzd4PY+Ot+u8HpAECA=="
+}

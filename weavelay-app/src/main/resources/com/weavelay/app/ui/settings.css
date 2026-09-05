@@ -1,0 +1,498 @@
+.settings-root {
+    -fx-background-color: #f3f8f8;
+}
+
+.settings-nav {
+    -fx-background-color: #eef5f5;
+    -fx-border-color: #c5dede;
+    -fx-border-width: 0 1 0 0;
+}
+
+.settings-nav .list-cell {
+    -fx-padding: 8 12;
+    -fx-background-color: transparent;
+}
+
+.settings-nav .list-cell:selected {
+    -fx-background-color: #d9e9e9;
+    -fx-text-fill: #2f4f4f;
+}
+
+.settings-table {
+    -fx-background-color: white;
+    -fx-border-color: #c5dede;
+    -fx-border-width: 1;
+    -fx-table-cell-border-color: #e3efef;
+}
+
+.settings-table .column-header-background {
+    -fx-background-color: #d9e9e9;
+    -fx-border-color: #b8d4d4;
+    -fx-border-width: 0 0 1 0;
+}
+
+.settings-table .column-header,
+.settings-table .column-header .label {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3a5555;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER-LEFT;
+}
+
+.settings-table .table-row-cell:odd {
+    -fx-background-color: #eef5f5;
+}
+
+.settings-table .table-row-cell:even {
+    -fx-background-color: white;
+}
+
+.settings-table .table-row-cell:selected {
+    -fx-background-color: #c8e6e2;
+    -fx-table-cell-border-color: #b8d4d4;
+}
+
+.settings-table .table-row-cell:selected .text {
+    -fx-fill: #2f4f4f;
+}
+
+.settings-toolbar-btn {
+    -fx-background-color: #d9e9e9;
+    -fx-text-fill: #2f4f4f;
+    -fx-border-color: #a8caca;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-padding: 4 12;
+    -fx-cursor: hand;
+}
+
+.settings-toolbar-btn:hover {
+    -fx-background-color: #c8e6e2;
+}
+
+.icon-toolbar-btn,
+.icon-action-btn,
+.icon-header-btn {
+    -fx-background-color: transparent;
+    -fx-padding: 4;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.icon-toolbar-btn {
+    -fx-background-color: #d9e9e9;
+    -fx-border-color: #a8caca;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.icon-toolbar-btn:hover {
+    -fx-background-color: #c8e6e2;
+}
+
+.icon-action-btn:hover,
+.icon-header-btn:hover {
+    -fx-background-color: #eef8f7;
+    -fx-background-radius: 4;
+}
+
+.settings-action-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2a8f85;
+    -fx-border-color: transparent;
+    -fx-padding: 2 8;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+    -fx-underline: true;
+}
+
+.settings-action-btn:hover {
+    -fx-text-fill: #1f6b63;
+    -fx-background-color: #eef8f7;
+    -fx-background-radius: 3;
+    -fx-underline: false;
+}
+
+.settings-section-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3a5555;
+}
+
+.settings-hint {
+    -fx-text-fill: #7a9494;
+    -fx-font-size: 11px;
+}
+
+.app-tooltip {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #2f4f4f;
+    -fx-font-size: 12px;
+    -fx-background-radius: 4;
+    -fx-padding: 6 10;
+    -fx-border-color: #c5dede;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+.app-tooltip .label {
+    -fx-text-fill: #2f4f4f;
+}
+
+/* —— 设置内弹窗 —— */
+.settings-dialog {
+    -fx-background-color: #ffffff;
+}
+
+.settings-dialog > .content.label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #3a5555;
+    -fx-padding: 8 4 4 4;
+}
+
+.settings-dialog:header .header-panel {
+    -fx-background-color: transparent;
+    -fx-padding: 16 20 0 20;
+}
+
+.settings-dialog:header .header-panel .label {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2f4f4f;
+}
+
+.settings-dialog > .button-bar {
+    -fx-background-color: #f7fbfb;
+    -fx-border-color: #e3efef;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 12 16 14 16;
+}
+
+.settings-dialog-heading {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f4a4a;
+}
+
+.settings-dialog-eyebrow {
+    -fx-font-size: 11px;
+    -fx-text-fill: #7a9494;
+    -fx-padding: 0 0 2 0;
+}
+
+.settings-dialog-detail {
+    -fx-font-size: 12.5px;
+    -fx-text-fill: #5f7f7f;
+}
+
+.settings-dialog-path {
+    -fx-font-size: 12px;
+    -fx-text-fill: #2a8f85;
+    -fx-background-color: #eef8f7;
+    -fx-background-radius: 4;
+    -fx-padding: 8 10;
+    -fx-border-color: #c5dede;
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+}
+
+.settings-dialog-path-card {
+    -fx-background-color: #f3f8f8;
+    -fx-background-radius: 8;
+    -fx-border-color: #d5e6e6;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 12 14;
+}
+
+.settings-dialog-filename {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f6b63;
+    -fx-font-family: "Cascadia Mono", "Consolas", "Microsoft YaHei", monospace;
+}
+
+.settings-dialog-dir {
+    -fx-font-size: 11.5px;
+    -fx-text-fill: #7a9494;
+    -fx-font-family: "Cascadia Mono", "Consolas", "Microsoft YaHei", monospace;
+}
+
+.settings-template-dialog {
+    -fx-padding: 8 4 0 4;
+}
+
+.settings-dialog-btn {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #2f4f4f;
+    -fx-border-color: #c5dede;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 7 18;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+    -fx-min-width: 88;
+}
+
+.settings-dialog-btn:hover {
+    -fx-background-color: #eef8f7;
+    -fx-border-color: #a8caca;
+}
+
+.settings-dialog-btn-primary {
+    -fx-background-color: #2a8f85;
+    -fx-text-fill: white;
+    -fx-border-color: #2a8f85;
+}
+
+.settings-dialog-btn-primary:hover {
+    -fx-background-color: #238078;
+    -fx-border-color: #238078;
+    -fx-text-fill: white;
+}
+
+.settings-dialog-btn-muted {
+    -fx-background-color: #f3f8f8;
+    -fx-text-fill: #5f7f7f;
+}
+
+.settings-dialog-btn-danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: #c62828;
+    -fx-border-color: transparent;
+}
+
+.settings-dialog-btn-danger:hover {
+    -fx-background-color: #fff5f5;
+    -fx-border-color: #f0c4c4;
+    -fx-text-fill: #b71c1c;
+}
+
+.license-status-label {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 0 8 0;
+}
+
+.license-status-ok {
+    -fx-text-fill: #1f6b63;
+}
+
+.license-status-warn {
+    -fx-text-fill: #b45309;
+}
+
+.license-status-bad {
+    -fx-text-fill: #c62828;
+}
+
+.settings-form-panel {
+    -fx-background-color: white;
+}
+
+.settings-form-footer {
+    -fx-background-color: #f7fbfb;
+    -fx-border-color: #e3efef;
+    -fx-border-width: 1 0 0 0;
+}
+
+.settings-form-dialog {
+    -fx-background-color: white;
+}
+
+.settings-form-dialog .button-bar {
+    -fx-padding: 12 28 20 28;
+    -fx-background-color: #f7fbfb;
+    -fx-border-color: #e3efef;
+    -fx-border-width: 1 0 0 0;
+}
+
+.settings-form-header {
+    -fx-background-color: #d9e9e9;
+    -fx-padding: 20 28 18 28;
+}
+
+.settings-form-heading {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2f4f4f;
+}
+
+.settings-form-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: #5f7f7f;
+}
+
+.settings-form-body {
+    -fx-background-color: white;
+}
+
+.settings-form-label {
+    -fx-text-fill: #3a5555;
+    -fx-font-size: 13px;
+    -fx-padding: 6 0 0 0;
+}
+
+.settings-form-field {
+    -fx-pref-height: 34;
+    -fx-font-size: 13px;
+    -fx-background-color: white;
+    -fx-border-color: #c5dede;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6 10;
+}
+
+.settings-form-field:focused {
+    -fx-border-color: #2a8f85;
+}
+
+.settings-form-textarea {
+    -fx-pref-height: 280;
+    -fx-min-height: 200;
+    -fx-font-size: 13px;
+    -fx-font-family: "Consolas", "Monaco", monospace;
+    -fx-background-color: white;
+    -fx-border-color: #c5dede;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 10 12;
+}
+
+.settings-form-textarea:focused {
+    -fx-border-color: #2a8f85;
+}
+
+.settings-table-field {
+    -fx-background-color: white;
+    -fx-border-color: #2a8f85;
+    -fx-padding: 4 8;
+    -fx-font-size: 13px;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
+
+.settings-table-placeholder-cell {
+    -fx-text-fill: #a8caca;
+    -fx-font-size: 12px;
+}
+
+.settings-output-card {
+    -fx-background-color: white;
+    -fx-border-color: #c5dede;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 16;
+    -fx-spacing: 8;
+}
+
+.settings-output-example {
+    -fx-text-fill: #7a9494;
+    -fx-font-size: 12px;
+    -fx-font-family: "Consolas", "Monaco", monospace;
+    -fx-padding: 0 0 4 0;
+}
+
+.settings-kind-detail {
+    -fx-background-color: #f7fbfb;
+    -fx-border-color: #c5dede;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 12;
+    -fx-spacing: 14;
+}
+
+.settings-detail-block {
+    -fx-spacing: 6;
+}
+
+.settings-primary-btn {
+    -fx-background-color: #2a8f85;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-padding: 8 28;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-cursor: hand;
+}
+
+.settings-primary-btn:hover {
+    -fx-background-color: #1f6b63;
+}
+
+.settings-secondary-btn {
+    -fx-background-color: white;
+    -fx-text-fill: #3a5555;
+    -fx-font-size: 13px;
+    -fx-padding: 8 28;
+    -fx-border-color: #c5dede;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-cursor: hand;
+}
+
+.settings-secondary-btn:hover {
+    -fx-background-color: #f0f8f7;
+}
+
+.settings-form-pane {
+    -fx-background-color: white;
+}
+
+.settings-field-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #3a5555;
+}
+
+.settings-field-help {
+    -fx-text-fill: #5a7575;
+    -fx-font-size: 12px;
+    -fx-padding: 0 0 0 4;
+}
+
+.settings-ocr-param {
+    -fx-border-color: #e3efef;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 0 0 12 0;
+}
+
+.settings-ocr-form TextField {
+    -fx-font-size: 13px;
+    -fx-padding: 6 10;
+}
+
+.settings-save-status {
+    -fx-text-fill: #2a8f85;
+    -fx-font-size: 13px;
+    -fx-padding: 0 0 0 4;
+}
+
+.settings-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.settings-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.settings-field {
+    -fx-background-color: white;
+    -fx-border-color: #d5d5d5;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6 8;
+    -fx-font-size: 13px;
+}
+
+.settings-field:focused {
+    -fx-border-color: #2a8f85;
+}
+
+.settings-combo {
+    -fx-background-color: white;
+    -fx-border-color: #d5d5d5;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-font-size: 13px;
+}

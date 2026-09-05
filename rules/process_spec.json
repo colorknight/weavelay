@@ -1,0 +1,71 @@
+{
+  "documentFamily": "process_spec",
+  "displayName": "工艺规程",
+  "pageKinds": [
+    {
+      "code": "process_catalog",
+      "displayName": "工序目录",
+      "classifyPriority": 10,
+      "anchors": ["工序目录"],
+      "rule": {
+        "yThreshold": 80,
+        "xThreshold": 80,
+        "pairMode": "VERTICAL",
+        "rowTolerance": 80,
+        "colTolerance": 120
+      },
+      "slots": [
+        {"code": "product_code", "label": "产品代号"},
+        {"code": "part_name", "label": "零部件名称"},
+        {"code": "part_code", "label": "零部件代号"},
+        {"code": "material", "label": "材料"},
+        {"code": "tbl_supply_status", "label": "供应状态"},
+        {"code": "tbl_blank_type", "label": "毛坯种类"},
+        {"code": "tbl_blank_size", "label": "毛坯尺寸"},
+        {"code": "tbl_blank_weight", "label": "毛坯重量kg"},
+        {"code": "tbl_parts_per_blank", "label": "每一毛坯可制零件数"},
+        {"code": "tbl_part_weight", "label": "零件重量kg"},
+        {"code": "tbl_parts_per_set", "label": "每套产品零件数"}
+      ]
+    },
+    {
+      "code": "process_drawing",
+      "displayName": "工艺附图",
+      "classifyPriority": 20,
+      "anchors": ["工艺附图"]
+    },
+    {
+      "code": "machining_card",
+      "displayName": "机械加工工序卡片",
+      "classifyPriority": 30,
+      "anchors": ["机械加工工序卡片", "工序卡片"]
+    },
+    {
+      "code": "inspection_card",
+      "displayName": "检验卡片",
+      "classifyPriority": 40,
+      "anchors": ["检验卡片"]
+    },
+    {
+      "code": "auxiliary_card",
+      "displayName": "辅助工序卡片",
+      "classifyPriority": 50,
+      "anchors": ["辅助工序卡片"]
+    },
+    {
+      "code": "cover",
+      "displayName": "封面",
+      "classifyPriority": 60,
+      "anchors": ["工艺规程"],
+      "rule": {
+        "pairMode": "HORIZONTAL",
+        "rowTolerance": 80
+      },
+      "slots": [
+        {"code": "product_code", "label": "产品代号"},
+        {"code": "part_name", "label": "零部件名称"},
+        {"code": "part_code", "label": "零部件代号"}
+      ]
+    }
+  ]
+}

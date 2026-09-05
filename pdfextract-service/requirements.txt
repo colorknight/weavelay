@@ -1,0 +1,8 @@
+flask>=3.0
+Pillow>=10.0
+paddleocr>=2.7
+paddlepaddle>=3.0.0b1  # CPU 版; GPU 版用 paddlepaddle-gpu
+# PDF-Extract-Kit (按需安装)
+# 完整管线: 需要另外安装 pdf-extract-kit 及其依赖
+# pip install pdf-extract-kit  (如果可用)
+# 或从源码: pip install -e /path/to/PDF-Extract-Kit
